@@ -27,6 +27,7 @@ export class HomePage {
   }   
 
   login() {
+    console.log(this.creds);
     this.navCtrl.setRoot('CategoriasPage')
   }
 }
