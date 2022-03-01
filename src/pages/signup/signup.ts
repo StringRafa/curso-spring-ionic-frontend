@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AlertController, IonicPage, NavController, NavParams } from 'ionic-angular';
 import { CidadeDTO } from '../../models/cidade.dto';
 import { EstadoDTO } from '../../models/estado.dto';
 import { CidadeService } from '../../services/domain/cidade.service';
+import { ClienteService } from '../../services/domain/cliente.service';
 import { EstadoService } from '../../services/domain/estado.service';
 
 @IonicPage()
@@ -18,11 +19,13 @@ export class SignupPage {
   cidades: CidadeDTO[];
 
   constructor(
-    public navCtrl: NavController, 
+    public navCtrl: NavController,
     public navParams: NavParams,
     public formBuilder: FormBuilder,
     public cidadeService: CidadeService,
-    public estadoService: EstadoService) {
+    public estadoService: EstadoService,
+    public clienteService: ClienteService,
+    public alertController: AlertController) {
 
     this.formGroup = this.formBuilder.group({
       nome: ['Caique Moran', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
@@ -50,7 +53,7 @@ export class SignupPage {
         this.formGroup.controls.estadoId.setValue(this.estados[0].id);
         this.updateCidades();
       },
-      error => {});
+        error => { });
   }
 
   updateCidades() {
@@ -60,11 +63,32 @@ export class SignupPage {
         this.cidades = response;
         this.formGroup.controls.cidadeId.setValue(null);
       },
-      error => {});
+        error => { });
   }
 
   signupUser() {
-    console.log("Enviou o formulário");
-    this.navCtrl.setRoot('CategoriasPage');
+    console.log(this.formGroup.value);
+    this.clienteService.insert(this.formGroup.value)
+      .subscribe(response => {
+        this.showInsertOk();
+      },
+        error => { });
+  }
+
+  showInsertOk() {
+    let alert = this.alertController.create({
+      title: 'Sucesso!',
+      message: 'Cadastro efetuado com sucesso',
+      enableBackdropDismiss: false,
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 }
