@@ -10,32 +10,31 @@ import { AuthService } from '../../services/auth.service';
 })
 export class HomePage {
 
-  creds : CredenciaisDTO = {
+  creds: CredenciaisDTO = {
     email: "",
     senha: ""
   };
 
   constructor(public navCtrl: NavController,
-     public menu: MenuController,
-     public auth: AuthService) {
-
+    public menu: MenuController,
+    public auth: AuthService) {
   }
 
   ionViewWillEnter() {
-      this.menu.swipeEnable(false);
+    this.menu.swipeEnable(false);
   }
-  
+
   ionViewDidLeave() {
-      this.menu.swipeEnable(true);
-  }   
+    this.menu.swipeEnable(true);
+  }
 
   ionViewDidEnter() {
     this.auth.refreshToken()
-    .subscribe(response => {
-      this.auth.successfulLogin(response.headers.get('Authorization'))
-      this.navCtrl.setRoot('CategoriasPage')
-    },
-    error => {});
+      .subscribe(response => {
+        this.auth.successfulLogin(response.headers.get('Authorization'))
+        this.navCtrl.setRoot('CategoriasPage')
+      },
+        error => { });
   }
 
   login() {
@@ -44,7 +43,7 @@ export class HomePage {
         this.auth.successfulLogin(response.headers.get('Authorization'))
         this.navCtrl.setRoot('CategoriasPage')
       },
-      error => {});
+        error => { });
   }
 
   signup() {
