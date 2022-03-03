@@ -26,21 +26,23 @@ export class ProdutosPage {
         this.items = response['content'];
         this.loadImageUrls();
       },
-      error => {});
+        error => { });
   }
 
   loadImageUrls() {
-    for (var i=0; i<this.items.length; i++) {
+    for (var i = 0; i < this.items.length; i++) {
       let item = this.items[i];
       this.produtoService.getSmallImageFromBucket(item.id)
         .subscribe(response => {
           item.imageUrl = `${API_CONFIG.bucketBaseUrl}/prod${item.id}.jpg`;
         },
-        error => {});
+          error => { });
     }
   }
 
-  showDetail() {
-    this.navCtrl.push('ProdutoDetailPage');
+  showDetail(produto_id: string) {
+    this.navCtrl.push('ProdutoDetailPage', {
+      produto_id: produto_id
+    });
   }
 }
