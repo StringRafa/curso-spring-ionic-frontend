@@ -1,6 +1,4 @@
-import { ConditionalExpr } from '@angular/compiler';
 import { Component } from '@angular/core';
-import { Console } from '@angular/core/src/console';
 import { IonicPage, LoadingController, NavController, NavParams } from 'ionic-angular';
 import { API_CONFIG } from '../../config/api.config';
 import { ProdutoDTO } from '../../models/produto.dto';
