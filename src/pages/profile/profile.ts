@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { API_CONFIG } from '../../config/api.config';
@@ -15,6 +16,7 @@ export class ProfilePage {
 
   cliente: ClienteDTO;
   picture: string;
+  profileImage;
   cameraOn: boolean = false;
 
   constructor(
@@ -22,7 +24,10 @@ export class ProfilePage {
     public navParams: NavParams,
     public storage: StorageService,
     public clienteService: ClienteService,
-    private camera: Camera) {
+    private camera: Camera,
+    private sanitizer: DomSanitizer) {
+
+      this.profileImage = 'assets/imgs/avatar-blank.png';
   }
 
   ionViewDidLoad() {
@@ -52,14 +57,29 @@ export class ProfilePage {
     this.clienteService.getImageFromBucket(this.cliente.id)
       .subscribe(response => {
         this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
+        this.blobToDataURL(response).then(dataUrl => {
+          let str : string = dataUrl as string;
+          this.profileImage = this.sanitizer.bypassSecurityTrustUrl(str);
+        });
       },
-        error => { });
+        error => {
+          this.profileImage = 'assets/imgs/avatar-blank.png';
+        });
+  }
+
+  blobToDataURL(blob) {
+    return new Promise((fulfill, reject) => {
+      let reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = (e) => fulfill(reader.result);
+      reader.readAsDataURL(blob);
+    })
   }
 
   getCameraPicture() {
 
     this.cameraOn = true;
-    
+
     const options: CameraOptions = {
       quality: 100,
       destinationType: this.camera.DestinationType.DATA_URL,
@@ -78,7 +98,7 @@ export class ProfilePage {
   getGalleryPicture() {
 
     this.cameraOn = true;
-    
+
     const options: CameraOptions = {
       quality: 100,
       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
@@ -97,12 +117,12 @@ export class ProfilePage {
 
   sendPicture() {
     this.clienteService.uploadPicture(this.picture)
-    .subscribe(response => {
-      this.picture = null;
-      this.loadData();
-    },
-    error => {
-    });
+      .subscribe(response => {
+        this.picture = null;
+        this.getImageIfExists();
+      },
+        error => {
+        });
   }
 
   cancel() {
