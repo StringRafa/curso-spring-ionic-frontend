@@ -31,8 +31,8 @@ export class HomePage {
   ionViewDidEnter() {
     this.auth.refreshToken()
       .subscribe(response => {
-        this.auth.successfulLogin(response.headers.get('Authorization'))
-        this.navCtrl.setRoot('CategoriasPage')
+        this.auth.successfulLogin(response.headers.get('Authorization'));
+        this.navCtrl.setRoot('CategoriasPage');
       },
         error => { });
   }
@@ -40,8 +40,8 @@ export class HomePage {
   login() {
     this.auth.authenticate(this.creds)
       .subscribe(response => {
-        this.auth.successfulLogin(response.headers.get('Authorization'))
-        this.navCtrl.setRoot('CategoriasPage')
+        this.auth.successfulLogin(response.headers.get('Authorization'));
+        this.navCtrl.setRoot('CategoriasPage');
       },
         error => { });
   }

@@ -87,4 +87,11 @@ export class ProfilePage {
   cancel() {
     this.picture = null;
   }
+
+  doRefresh(refresher) {
+    this.loadData();
+    setTimeout(() => {
+      refresher.complete();
+    }, 1000);
+  }
 }
